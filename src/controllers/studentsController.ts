@@ -1,95 +1,104 @@
-const db = require('../database/connection.js');
+import {Request, Response} from "express";
+import { AppDataSource } from "../db/connection";
+import {Student} from "../models/studentsModel";
 
 class StudentsController {
-    constructor(){
-
-    }
-    consult(req, res){
-        try{
-            db.query("SELECT * FROM students",
-                (err, rows) => {
-                    if(err) {
-                        return res.status(400).send(err);
-                    }
-                    res.status(200).json(rows);
-                });
+    async consult(req: Request, res: Response): Promise<void> {
+        try {
+            const studentRepository = AppDataSource.getRepository(Student);
+            const data = await studentRepository.find();
+            res.status(200).json(data);
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error) {
+                res.status(500).send(err.message);
+            }
         }
-
     }
 
-    consultDetail(req, res){
+    async consultDetail(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        try{
-            db.query("SELECT * FROM students WHERE id = ?", [id],
-                (err, rows) => {
-                    if(err) {
-                        return res.status(400).send(err);
-                    }
-                    res.status(200).json(rows[0]);
-                });
+        try {
+            const studentRepository = AppDataSource.getRepository(Student);
+            const register = await studentRepository.findOneBy({ id: Number(id) });
+
+            if (!register) {
+                throw new Error('Student not found');
+            }
+
+            res.status(200).json(register);
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error) {
+                res.status(500).send(err.message);
+            }
         }
     }
 
-    input(req, res){
-        try{
-            const { dni, name, lastname, email } = req.body;
-            db.query("INSERT INTO courses.students\n" +
-                "(id, dni, name, lastname, email)\n" +
-                "VALUES(NULL, ?, ?, ?, ?);",
-                [dni, name, lastname, email],(err, rows) => {
-                if(err){
-                    return res.status(400).send(err);
-                }
-                res.status(201).json({ id: rows.insertId });
+    async input(req: Request, res: Response): Promise<void> {
+        try {
+            const { dni, name, last_name, email } = req.body;
+
+            if (!dni || !name || !last_name || !email) {
+                res.status(400).json({
+                    error: 'Missing required fields: dni, name, last_name, email'
                 });
+                return;
+            }
+
+            const studentRepository = AppDataSource.getRepository(Student);
+            const newStudent = studentRepository.create({
+                dni,
+                name,
+                last_name,
+                email
+            });
+            const register = await studentRepository.save(newStudent);
+            res.status(201).json(register);
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error) {
+                res.status(500).send(err.message);
+            }
         }
     }
 
-    update(req, res){
+    async update(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        try{
-            const { dni, name, lastname, email } = req.body;
-            db.query(`UPDATE students 
-             SET dni = ?, name = ?, lastname = ?, email = ? 
-             WHERE id = ?`,
-                [dni, name, lastname, email, id],(err, rows) => {
-                    if(err){
-                        return res.status(400).send(err);
-                    }
-                    if(rows.affectedRows === 1) {
-                        return res.status(200).json({ respuesta: 'Registro actualizado exitosamente' });
-                    }
-                    return res.status(404).json({ error: 'Estudiante no encontrado' });
-                });
-        } catch (err) {
-            res.status(500).send(err.message);
-        }
+        try {
+            const studentRepository = AppDataSource.getRepository(Student);
+            const register = await studentRepository.findOneBy({ id: Number(id) });
 
+            if (!register) {
+                throw new Error('Student not found');
+            }
+
+            await studentRepository.update(Number(id), req.body);
+            const registerUpdated = await studentRepository.findOneBy({ id: Number(id) });
+
+            res.status(200).json(registerUpdated);
+        } catch (err) {
+            if (err instanceof Error) {
+                res.status(500).send(err.message);
+            }
+        }
     }
 
-    delete(req, res){
+    async delete(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
-        try{
-            db.query(`DELETE FROM students WHERE id = ?`,
-                [id],(err, rows) => {
-                    if(err){
-                        return res.status(400).send(err);
-                    }
-                    if(rows.affectedRows === 1) {
-                        return res.status(200).json({ respuesta: 'Registro Eliminado exitosamente' });
-                    }
-                    return res.status(404).json({ error: 'Estudiante no encontrado' });
-                });
+        try {
+            const studentRepository = AppDataSource.getRepository(Student);
+            const register = await studentRepository.findOneBy({ id: Number(id) });
+
+            if (!register) {
+                throw new Error('Student not found');
+            }
+
+            await studentRepository.delete(Number(id));
+            res.status(204).send();
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error) {
+                res.status(500).send(err.message);
+            }
         }
     }
 }
 
-module.exports = new StudentsController; //Exportamos la instancia de la clase
+export default new StudentsController();

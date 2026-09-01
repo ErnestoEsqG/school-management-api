@@ -1,17 +1,18 @@
-import express from "express";
-import cors from "cors";
-import morgan from "morgan";
+import app from './app';
+import { AppDataSource} from "./db/connection";
 
-const app = express();
+async function main() {
+    try {
+        await AppDataSource.initialize();
+        console.log("Database Connected!");
+        app.listen(3000, () => {
+            console.log("App listening on port 3000");
+        });
+    } catch (err) {
+        if (err instanceof Error) {
+            console.error(err.message);
+        }
+    }
+}
 
-app.use(morgan("dev"));
-app.use(cors());
-
-app.get("/", (req, res) => {
-    console.log("Hello World!");
-    res.send("Hello World!");
-})
-
-app.listen(3000,  () => {
-    console.log("App is running on port 3000");
-});
+main();

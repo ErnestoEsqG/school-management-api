@@ -1,104 +1,68 @@
-const db = require('../database/connection.js');
+import {Request, Response} from "express";
+
 
 class CoursesController {
-
-    consult(req, res){
-        try{
-            db.query("SELECT * FROM courses",
-                (err, rows) => {
-                    if(err) {
-                        res.status(400).send(err);
-                    }
-                    res.status(200).json(rows);
-                });
-        } catch (err) {
-            res.status(500).send(err.message);
-        }
+    constructor() {
 
     }
 
-    consultDetail(req, res){
+    consult(req: Request, res: Response): void {
+        try {
+            res.send("Consult Courses");
+        } catch (err) {
+            if (err instanceof Error)
+                res.status(500).send(err.message);
+        }
+    }
+
+    consultDetail(req: Request, res: Response): void {
         const { id } = req.params;
-        try{
-            db.query("SELECT * FROM courses WHERE id = ?", [id],
-                (err, rows) => {
-                    if(err) {
-                        res.status(400).send(err);
-                    }
-                    res.status(200).json(rows[0]);
-                });
+        try {
+            res.send("Consult details");
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error)
+                res.status(500).send(err.message);
         }
     }
 
-    input(req, res){
-        try{
-            const {name, description, professor_id } = req.body;
-            db.query(`INSERT INTO courses (id, name, description, professor_id)
-            VALUES (NULL, ?, ?, ?)`,
-                [name, description, professor_id],(err, rows) => {
-                    if(err){
-                        res.status(400).send(err);
-                    }
-                    res.status(201).json({ id: rows.insertId });
-                });
+    input(req: Request, res: Response): void {
+        try {
+            res.send("Input");
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error)
+                res.status(500).send(err.message);
         }
     }
 
-    update(req, res){
+    update(req: Request, res: Response): void {
         const { id } = req.params;
-        try{
-            const { name, description, professor_id } = req.body;
-            db.query(`UPDATE courses 
-             SET name = ?, description = ?, professor_id = ?
-             WHERE id = ?`,
-                [name, description, professor_id, id],(err, rows) => {
-                    if(err){
-                        res.status(400).send(err);
-                    }
-                    if(rows.affectedRows == 1)
-                        res.status(200).json({  respuesta: 'Registro actualizado exitosamente'});
-                });
+        try {
+            res.send("Update");
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error)
+                res.status(500).send(err.message);
         }
-
     }
 
-    delete(req, res){
+    delete(req: Request, res: Response): void {
         const { id } = req.params;
-        try{
-            db.query(`DELETE FROM courses WHERE id = ?`,
-                [id],(err, rows) => {
-                    if(err){
-                        res.status(400).send(err);
-                    }
-                    if(rows.affectedRows == 1)
-                        res.status(200).json({  respuesta: 'Registro Eliminado exitosamente'});
-                });
+        try {
+            res.send("Delete");
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error)
+                res.status(500).send(err.message);
         }
     }
 
-    associateStudent(req, res){
-        try{
-            const { course_id, student_id } = req.body;
-            db.query(`INSERT INTO students_courses (course_id, student_id)
-            VALUES (?, ?)`,
-                [course_id, student_id],(err, rows) => {
-                    if(err){
-                        res.status(400).send(err.message);
-                    }
-                    res.status(201).json({ respuesta: 'Estudiante registrado exitosamente' });
-                });
+    associateStudent(req: Request, res: Response): void {
+        const { id } = req.params;
+        try {
+            res.send("Associate student");
         } catch (err) {
-            res.status(500).send(err.message);
+            if (err instanceof Error)
+                res.status(500).send(err.message);
         }
     }
 }
 
-module.exports = new CoursesController;
+export default new CoursesController(); //Exportamos la instancia de la clase

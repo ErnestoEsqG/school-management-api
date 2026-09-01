@@ -1,6 +1,7 @@
-const express = require('express');
+import express from "express";
+import coursesController from '../controllers/coursesController';
 const router = express.Router();
-const coursesController = require('../controllers/coursesController.js');
+
 
 router.get('/', coursesController.consult);
 
@@ -12,4 +13,4 @@ router.route("/:id")
     .put(coursesController.update)
     .delete(coursesController.delete);
 
-module.exports = router;
+export default router;
