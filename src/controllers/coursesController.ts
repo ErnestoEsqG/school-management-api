@@ -1,68 +1,190 @@
-import {Request, Response} from "express";
-
+import { Request, Response } from "express";
+import { AppDataSource } from "../db/connection";
+import { Course } from "../models/courseModel";
+import { Professor } from "../models/professorsModel";
+import { Student } from "../models/studentsModel";
 
 class CoursesController {
-    constructor() {
-
-    }
-
-    consult(req: Request, res: Response): void {
+    async consult(req: Request, res: Response): Promise<void> {
         try {
-            res.send("Consult Courses");
+            const courseRepository = AppDataSource.getRepository(Course);
+            const data = await courseRepository.find({
+                relations: { professor: true, students: true }
+            });
+            res.status(200).json(data);
         } catch (err) {
-            if (err instanceof Error)
+            if (err instanceof Error) {
                 res.status(500).send(err.message);
+            }
         }
     }
 
-    consultDetail(req: Request, res: Response): void {
+    async consultDetail(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         try {
-            res.send("Consult details");
+            const courseRepository = AppDataSource.getRepository(Course);
+            const register = await courseRepository.findOne({
+                where: { id: Number(id) },
+                relations: { professor: true, students: true }
+            });
+
+            if (!register) {
+                throw new Error("Course not found");
+            }
+
+            res.status(200).json(register);
         } catch (err) {
-            if (err instanceof Error)
+            if (err instanceof Error) {
                 res.status(500).send(err.message);
+            }
         }
     }
 
-    input(req: Request, res: Response): void {
+    async input(req: Request, res: Response): Promise<void> {
         try {
-            res.send("Input");
+            const { name, description, professor_id} = req.body;
+            const professorId = professor_id;
+
+            if (!name || !description || professorId === undefined) {
+                res.status(400).json({
+                    error: "Missing required fields: name, description, professor_id"
+                });
+                return;
+            }
+
+            const professorRepository = AppDataSource.getRepository(Professor);
+            const professorRegister = await professorRepository.findOneBy({
+                id: Number(professorId)
+            });
+
+            if (!professorRegister) {
+                throw new Error("Professor not found");
+            }
+
+            const courseRepository = AppDataSource.getRepository(Course);
+            const newCourse = courseRepository.create({
+                name,
+                description,
+                professor: professorRegister
+            });
+            const register = await courseRepository.save(newCourse);
+
+            res.status(201).json(register);
         } catch (err) {
-            if (err instanceof Error)
+            if (err instanceof Error) {
                 res.status(500).send(err.message);
+            }
         }
     }
 
-    update(req: Request, res: Response): void {
+    async update(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         try {
-            res.send("Update");
+            const courseRepository = AppDataSource.getRepository(Course);
+            const register = await courseRepository.findOneBy({ id: Number(id) });
+
+            if (!register) {
+                throw new Error("Course not found");
+            }
+
+            const { name, description, professor_id, professor, profesor } = req.body;
+            const professorId = professor_id ?? professor ?? profesor;
+            const updateData: Partial<Course> = {};
+
+            if (name !== undefined) {
+                updateData.name = name;
+            }
+            if (description !== undefined) {
+                updateData.description = description;
+            }
+            if (professorId !== undefined) {
+                const professorRepository = AppDataSource.getRepository(Professor);
+                const professorRegister = await professorRepository.findOneBy({
+                    id: Number(professorId)
+                });
+
+                if (!professorRegister) {
+                    throw new Error("Professor not found");
+                }
+
+                updateData.professor = professorRegister;
+            }
+
+            await courseRepository.update(Number(id), updateData);
+            const registerUpdated = await courseRepository.findOne({
+                where: { id: Number(id) },
+                relations: { professor: true, students: true }
+            });
+
+            res.status(200).json(registerUpdated);
         } catch (err) {
-            if (err instanceof Error)
+            if (err instanceof Error) {
                 res.status(500).send(err.message);
+            }
         }
     }
 
-    delete(req: Request, res: Response): void {
+    async delete(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
         try {
-            res.send("Delete");
+            const courseRepository = AppDataSource.getRepository(Course);
+            const register = await courseRepository.findOneBy({ id: Number(id) });
+
+            if (!register) {
+                throw new Error("Course not found");
+            }
+
+            await courseRepository.delete(Number(id));
+            res.status(204).send();
         } catch (err) {
-            if (err instanceof Error)
+            if (err instanceof Error) {
                 res.status(500).send(err.message);
+            }
         }
     }
 
-    associateStudent(req: Request, res: Response): void {
-        const { id } = req.params;
+    async associateStudent(req: Request, res: Response): Promise<void> {
         try {
-            res.send("Associate student");
+            const { student_id, course_id, Course_id } = req.body;
+            const courseId = course_id ?? Course_id;
+
+            if (student_id === undefined || courseId === undefined) {
+                res.status(400).json({
+                    error: "Missing required fields: student_id, course_id"
+                });
+                return;
+            }
+
+            const studentRepository = AppDataSource.getRepository(Student);
+            const courseRepository = AppDataSource.getRepository(Course);
+            const student = await studentRepository.findOneBy({
+                id: Number(student_id)
+            });
+            const course = await courseRepository.findOne({
+                where: { id: Number(courseId) },
+                relations: { students: true }
+            });
+
+            if (!student) {
+                throw new Error("Student not found");
+            }
+            if (!course) {
+                throw new Error("Course not found");
+            }
+
+            course.students = course.students || [];
+            if (!course.students.some((registeredStudent) => registeredStudent.id === student.id)) {
+                course.students.push(student);
+            }
+
+            await courseRepository.save(course);
+            res.status(201).json({ respuesta: "Estudiante registrado exitosamente" });
         } catch (err) {
-            if (err instanceof Error)
+            if (err instanceof Error) {
                 res.status(500).send(err.message);
+            }
         }
     }
 }
 
-export default new CoursesController(); //Exportamos la instancia de la clase
+export default new CoursesController();
