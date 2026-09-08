@@ -134,6 +134,10 @@ students_courses
 
 ## 📡 API Endpoints
 
+The API endpoints were organized and tested using a Postman collection.
+
+![Postman API Collection](docs/images/postman-collection.png)
+
 ### Students
 
 | Method | Endpoint | Description |
