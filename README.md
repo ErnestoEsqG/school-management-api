@@ -105,13 +105,16 @@ The system uses three main entities:
 - **Professor**
 - **Course**
 
+The following diagram shows the database structure and the relationships between the main entities:
+
+![Database Data Model](docs/images/data-model.png)
+
 ### Professor → Course
 
 A professor can teach multiple courses.
 
 ```text
 Professor 1 ───────── N Course
-```
 
 ### Student ↔ Course
 
