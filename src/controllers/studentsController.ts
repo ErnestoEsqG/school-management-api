@@ -22,7 +22,10 @@ class StudentsController {
             const register = await studentRepository.findOneBy({ id: Number(id) });
 
             if (!register) {
-                throw new Error('Student not found');
+                res.status(404).json({
+                    error: 'Student not found'
+                });
+                return;
             }
 
             res.status(200).json(register);
