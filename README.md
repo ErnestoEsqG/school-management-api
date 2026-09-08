@@ -288,14 +288,6 @@ Through this project, I practiced:
 
 ---
 
-## 📚 Project Context
-
-This project was developed while following a backend development course as part of my learning process.
-
-Starting from the course implementation, I made adjustments and refactorings to work with TypeScript, organize the project structure, configure environment variables, and better understand the flow of a REST API connected to a relational database.
-
----
-
 ## 👤 Author
 
 **Ernesto Esqueda**
