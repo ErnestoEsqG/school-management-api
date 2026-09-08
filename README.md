@@ -122,6 +122,7 @@ A professor can teach multiple courses.
 
 ```text
 Professor 1 ───────── N Course
+```
 
 ### Student ↔ Course
 
