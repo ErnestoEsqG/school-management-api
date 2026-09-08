@@ -1,7 +1,7 @@
 {
-  "name": "node-express-typeorm-ts",
+  "name": "school-management-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "REST API for managing students, professors and courses using Express, TypeScript, TypeORM and MySQL.",
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
@@ -9,8 +9,15 @@
     "start": "node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "rest-api",
+    "nodejs",
+    "express",
+    "typescript",
+    "typeorm",
+    "mysql"
+  ],
+  "author": "Ernesto Esqueda",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
