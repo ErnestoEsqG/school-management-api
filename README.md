@@ -1,8 +1,8 @@
 # 🏫 School Management REST API
 
-REST API para la gestión de **estudiantes, profesores y cursos**, desarrollada con **Node.js, Express, TypeScript, TypeORM y MySQL**.
+REST API for managing **students, professors, and courses**, built with **Node.js, Express, TypeScript, TypeORM, and MySQL**.
 
-Este proyecto fue realizado con fines de aprendizaje para practicar el desarrollo de APIs REST, operaciones CRUD, persistencia de datos y relaciones entre entidades utilizando TypeORM.
+This project was created as a learning project to practice REST API development, CRUD operations, database persistence, and entity relationships using TypeORM.
 
 [![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -12,24 +12,24 @@ Este proyecto fue realizado con fines de aprendizaje para practicar el desarroll
 
 ---
 
-## 📌 Descripción
+## 📌 Description
 
-La API permite administrar información relacionada con un sistema escolar mediante endpoints REST.
+The API manages information related to a school management system through REST endpoints.
 
-### Funcionalidades principales
+### Main features
 
-- Gestión de estudiantes.
-- Gestión de profesores.
-- Gestión de cursos.
-- Asignación de profesores a cursos.
-- Inscripción de estudiantes en cursos.
-- Persistencia de datos en MySQL mediante TypeORM.
+- Student management
+- Professor management
+- Course management
+- Professor assignment to courses
+- Student enrollment in courses
+- Data persistence in MySQL using TypeORM
 
-El proyecto está organizado separando rutas, controladores, modelos y configuración de base de datos.
+The project is organized by separating routes, controllers, models, and database configuration.
 
 ---
 
-## 🚀 Tecnologías
+## 🚀 Technologies
 
 - **Node.js**
 - **TypeScript**
@@ -44,19 +44,35 @@ El proyecto está organizado separando rutas, controladores, modelos y configura
 
 ---
 
-## 🧱 Arquitectura
+## 🧱 Architecture
+
+The source code is organized as follows:
 
 ```text
 src/
-├── controllers/       # Manejo de peticiones y lógica de cada recurso
-├── db/                # Configuración de conexión con MySQL
-├── models/            # Entidades definidas con TypeORM
-├── routes/            # Endpoints de la API
-├── app.ts             # Configuración de Express y middlewares
-└── index.ts           # Inicialización de la base de datos y servidor
+├── app.ts
+├── index.ts
+│
+├── controllers/
+│   ├── coursesController.ts
+│   ├── professorsController.ts
+│   └── studentsController.ts
+│
+├── db/
+│   └── connection.ts
+│
+├── models/
+│   ├── courseModel.ts
+│   ├── professorsModel.ts
+│   └── studentsModel.ts
+│
+└── routes/
+    ├── coursesRoutes.ts
+    ├── professorsRoutes.ts
+    └── studentsRoutes.ts
 ```
 
-Flujo general de una petición:
+### Request flow
 
 ```text
 HTTP Request
@@ -70,11 +86,20 @@ TypeORM Repository
    MySQL
 ```
 
+### Responsibilities
+
+- **`app.ts`** — Configures Express, middleware, and the main API routes.
+- **`index.ts`** — Initializes the database connection and starts the HTTP server.
+- **`controllers/`** — Handles requests and CRUD operations for each resource.
+- **`db/`** — Contains the TypeORM DataSource and MySQL connection configuration.
+- **`models/`** — Defines the database entities and their relationships.
+- **`routes/`** — Defines the available HTTP endpoints for each resource.
+
 ---
 
-## 🔗 Modelo de datos
+## 🔗 Data Model
 
-El sistema utiliza tres entidades principales:
+The system uses three main entities:
 
 - **Student**
 - **Professor**
@@ -82,7 +107,7 @@ El sistema utiliza tres entidades principales:
 
 ### Professor → Course
 
-Un profesor puede impartir varios cursos.
+A professor can teach multiple courses.
 
 ```text
 Professor 1 ───────── N Course
@@ -90,13 +115,13 @@ Professor 1 ───────── N Course
 
 ### Student ↔ Course
 
-Un estudiante puede estar inscrito en varios cursos y cada curso puede contener varios estudiantes.
+A student can be enrolled in multiple courses, and each course can contain multiple students.
 
 ```text
 Student N ───────── N Course
 ```
 
-La relación muchos a muchos se almacena mediante una tabla intermedia:
+The many-to-many relationship is stored through an intermediate table:
 
 ```text
 students_courses
@@ -104,19 +129,19 @@ students_courses
 
 ---
 
-## 📡 Endpoints
+## 📡 API Endpoints
 
 ### Students
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/students` | Obtener todos los estudiantes |
-| `GET` | `/students/:id` | Obtener un estudiante por ID |
-| `POST` | `/students` | Registrar un estudiante |
-| `PUT` | `/students/:id` | Actualizar un estudiante |
-| `DELETE` | `/students/:id` | Eliminar un estudiante |
+| `GET` | `/students` | Get all students |
+| `GET` | `/students/:id` | Get a student by ID |
+| `POST` | `/students` | Create a student |
+| `PUT` | `/students/:id` | Update a student |
+| `DELETE` | `/students/:id` | Delete a student |
 
-Ejemplo para registrar un estudiante:
+Example request body:
 
 ```json
 {
@@ -129,26 +154,26 @@ Ejemplo para registrar un estudiante:
 
 ### Professors
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/professors` | Obtener todos los profesores |
-| `GET` | `/professors/:id` | Obtener un profesor por ID |
-| `POST` | `/professors` | Registrar un profesor |
-| `PUT` | `/professors/:id` | Actualizar un profesor |
-| `DELETE` | `/professors/:id` | Eliminar un profesor |
+| `GET` | `/professors` | Get all professors |
+| `GET` | `/professors/:id` | Get a professor by ID |
+| `POST` | `/professors` | Create a professor |
+| `PUT` | `/professors/:id` | Update a professor |
+| `DELETE` | `/professors/:id` | Delete a professor |
 
 ### Courses
 
-| Método | Endpoint | Descripción |
+| Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/courses` | Obtener todos los cursos |
-| `GET` | `/courses/:id` | Obtener un curso por ID |
-| `POST` | `/courses` | Crear un curso |
-| `PUT` | `/courses/:id` | Actualizar un curso |
-| `DELETE` | `/courses/:id` | Eliminar un curso |
-| `POST` | `/courses/registerStudent` | Inscribir un estudiante en un curso |
+| `GET` | `/courses` | Get all courses |
+| `GET` | `/courses/:id` | Get a course by ID |
+| `POST` | `/courses` | Create a course |
+| `PUT` | `/courses/:id` | Update a course |
+| `DELETE` | `/courses/:id` | Delete a course |
+| `POST` | `/courses/registerStudent` | Enroll a student in a course |
 
-Ejemplo de inscripción:
+Example enrollment request:
 
 ```json
 {
@@ -157,28 +182,28 @@ Ejemplo de inscripción:
 }
 ```
 
-Las consultas de cursos incluyen la información del profesor asociado y de los estudiantes inscritos.
+Course queries also include the associated professor and enrolled students.
 
 ---
 
-## ⚙️ Instalación
+## ⚙️ Installation
 
-### 1. Clonar el repositorio
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/ErnestoEsqG/school-management-api.git
 cd school-management-api
 ```
 
-### 2. Instalar dependencias
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configurar las variables de entorno
+### 3. Configure environment variables
 
-Crea un archivo `.env` en la raíz del proyecto:
+Create a `.env` file in the project root based on `.env.example`:
 
 ```env
 DB_HOST=localhost
@@ -188,21 +213,21 @@ DB_PASSWORD=your_password
 DB_NAME=your_database
 ```
 
-> El archivo `.env` contiene información sensible y no debe incluirse en el repositorio.
+> The `.env` file may contain sensitive information and should not be committed to the repository.
 
-### 4. Configurar MySQL
+### 4. Configure MySQL
 
-Crea la base de datos indicada en `DB_NAME` y asegúrate de contar con las tablas necesarias para las entidades del proyecto.
+Create the database specified in `DB_NAME` and make sure the required tables exist.
 
-La sincronización automática de TypeORM se encuentra desactivada.
+TypeORM automatic synchronization is disabled in this project.
 
-### 5. Ejecutar el proyecto
+### 5. Run the project
 
 ```bash
 npm run dev
 ```
 
-El servidor se ejecuta por defecto en:
+The server runs by default at:
 
 ```text
 http://localhost:3000
@@ -212,53 +237,60 @@ http://localhost:3000
 
 ## 📜 Scripts
 
-### Desarrollo
+### Development
 
 ```bash
 npm run dev
 ```
 
-Ejecuta el servidor utilizando `ts-node-dev`.
+Runs the development server using `ts-node-dev`.
 
-### Compilar
+### Build
 
 ```bash
 npm run build
 ```
 
-Compila el código TypeScript a JavaScript.
+Compiles the TypeScript source code into JavaScript.
 
-### Ejecutar versión compilada
+### Start
 
 ```bash
 npm start
 ```
 
-Ejecuta la aplicación compilada desde el directorio `build/`.
+Runs the compiled application from the `build/` directory.
 
 ---
 
-## 🎯 Conceptos practicados
+## 🎯 Concepts Practiced
 
-Durante el desarrollo de este proyecto practiqué:
+Through this project, I practiced:
 
-- Diseño de endpoints REST.
-- Métodos HTTP y códigos de estado.
-- Operaciones CRUD.
-- Express Router.
-- Organización mediante rutas y controladores.
-- TypeScript aplicado al backend.
-- Entidades y repositorios con TypeORM.
-- Relaciones `One-to-Many` y `Many-to-Many`.
-- Conexión entre Node.js y MySQL.
-- Manejo de variables de entorno.
+- REST API design
+- HTTP methods and status codes
+- CRUD operations
+- Express Router
+- Route and controller organization
+- TypeScript for backend development
+- TypeORM entities and repositories
+- `One-to-Many` relationships
+- `Many-to-Many` relationships
+- Node.js and MySQL integration
+- Environment variable management
+
+---
+
+## 📚 Project Context
+
+This project was developed while following a backend development course as part of my learning process.
+
+Starting from the course implementation, I made adjustments and refactorings to work with TypeScript, organize the project structure, configure environment variables, and better understand the flow of a REST API connected to a relational database.
 
 ---
 
-## 📚 Contexto del proyecto
+## 👤 Author
 
-Este proyecto fue desarrollado siguiendo un curso como parte de mi proceso de aprendizaje de desarrollo backend.
+**Ernesto Esqueda**
 
-A partir de la implementación base realicé ajustes y refactorizaciones para trabajar con TypeScript, organizar la estructura del proyecto y comprender el funcionamiento de una API REST conectada a una base de datos relacional.
-
----
+Computer Science Engineering student.
