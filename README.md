@@ -46,30 +46,37 @@ The project is organized by separating routes, controllers, models, and database
 
 ## 🧱 Architecture
 
-The source code is organized as follows:
+The project is organized as follows:
 
 ```text
-src/
-├── app.ts
-├── index.ts
-│
-├── controllers/
-│   ├── coursesController.ts
-│   ├── professorsController.ts
-│   └── studentsController.ts
-│
-├── db/
-│   └── connection.ts
-│
-├── models/
-│   ├── courseModel.ts
-│   ├── professorsModel.ts
-│   └── studentsModel.ts
-│
-└── routes/
-    ├── coursesRoutes.ts
-    ├── professorsRoutes.ts
-    └── studentsRoutes.ts
+.
+├── database/
+│   └── schema.sql
+├── docs/
+│   └── images/
+├── src/
+│   ├── app.ts
+│   ├── index.ts
+│   ├── controllers/
+│   │   ├── coursesController.ts
+│   │   ├── professorsController.ts
+│   │   └── studentsController.ts
+│   ├── db/
+│   │   └── connection.ts
+│   ├── models/
+│   │   ├── courseModel.ts
+│   │   ├── professorsModel.ts
+│   │   └── studentsModel.ts
+│   └── routes/
+│       ├── coursesRoutes.ts
+│       ├── professorsRoutes.ts
+│       └── studentsRoutes.ts
+├── .env.example
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── README.md
+└── tsconfig.json
 ```
 
 ### Request flow
@@ -224,9 +231,24 @@ DB_NAME=your_database
 
 ### 4. Configure MySQL
 
-Create the database specified in `DB_NAME` and make sure the required tables exist.
+Create the database specified in `DB_NAME`.
 
-TypeORM automatic synchronization is disabled in this project.
+Then import the database schema:
+
+```bash
+mysql -u root -p your_database < database/schema.sql
+```
+
+Replace `your_database` with the same database name configured in your `.env` file.
+
+The SQL schema creates the required tables and relationships:
+
+- `students`
+- `professors`
+- `courses`
+- `students_courses`
+
+TypeORM automatic synchronization is disabled in this project (`synchronize: false`), so the database schema is created explicitly using `database/schema.sql`.
 
 ### 5. Run the project
 
