@@ -262,11 +262,3 @@ Este proyecto fue desarrollado siguiendo un curso como parte de mi proceso de ap
 A partir de la implementación base realicé ajustes y refactorizaciones para trabajar con TypeScript, organizar la estructura del proyecto y comprender el funcionamiento de una API REST conectada a una base de datos relacional.
 
 ---
-
-## 👤 Autor
-
-**Ernesto Esqueda**
-
-Estudiante de Ingeniería en Ciencias Computacionales.
-
-Intereses principales: **Backend Development, Data y Cloud Computing**.
